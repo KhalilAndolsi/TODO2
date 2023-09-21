@@ -1,0 +1,27 @@
+
+.deleteAccountBtn:hover .userIcon {
+  display: none;
+}
+.deleteAccountBtn:hover .removeIcon {
+  display: block !important;
+}
+
+.todosList {
+  max-height: 300px;
+  overflow: hidden scroll;
+}
+
+.todosList::-webkit-scrollbar {
+  display: none;
+}
+
+.todos .edit::after,
+.todos .delete::after {
+  content: "";
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
