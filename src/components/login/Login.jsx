@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./Login.css"
 import eyeOpen from "../../assets/icons/eyeOpen.svg"
 import eyeClose from "../../assets/icons/eyeClose.svg"
@@ -8,6 +8,12 @@ function Login() {
   const [hidePassword, setHidePassword] = useState(false)
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
+  useEffect(() => {
+    if(localStorage.getItem("todo2") !== null) {
+        setUsername(JSON.parse(localStorage.getItem("todo2")).username)
+        setPassword(JSON.parse(localStorage.getItem("todo2")).password)
+    }
+  }, [])
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +33,7 @@ function Login() {
     
         if (statusCode === 200) {
           const res = await response.json();
-          sessionStorage.setItem("todo2", JSON.stringify({username: res.username, password: res.password}));
+          localStorage.setItem("todo2", JSON.stringify({username: res.username, password: res.password}));
           window.location.href = "/"
         } else if (statusCode === 401) {
           alert('username or password is incorrect');
@@ -45,7 +51,7 @@ function Login() {
       <div className="box p-2 h-min rounded-lg border-2 border-zinc-900 w-[95%] md:w-96">
         <h2 className='font-semibold text-2xl uppercase text-center mb-6 p-3'>Login</h2>
         <form className='flex flex-col gap-3' onSubmit={handleLoginSubmit}>
-          <input type="text" id='username' placeholder='Username' autoFocus required defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
+          <input type="text" id='username' placeholder='Username' required defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
           {(username.length >= 12 || username.length === 0) || <span className='block text-red-600 text-sm ml-3'>At least 12 characters</span>}
           {/* password input */}
           <div className='relative'>

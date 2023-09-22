@@ -26,6 +26,7 @@ function Register() {
         const statusCode = response.status;
     
         if (statusCode === 200) {
+          localStorage.setItem("todo2", JSON.stringify({username: username, password: password}));
           window.alert("Account successfully registered")
           window.location.href = "/login"
         } else if (statusCode === 404) {

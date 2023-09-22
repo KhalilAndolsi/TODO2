@@ -3,10 +3,11 @@ import user from "../../assets/icons/user.svg";
 import remove from "../../assets/icons/close.svg";
 import edit from "../../assets/icons/edit.svg";
 import trash from "../../assets/icons/trash.svg";
+import logout from "../../assets/icons/logout.svg";
 import "./Todo.css";
 
 function Todo() {
-  if (sessionStorage.getItem("todo2") === null) {
+  if (localStorage.getItem("todo2") === null) {
     window.location.href = "/login";
   }
   const [data, setData] = useState(null);
@@ -17,7 +18,7 @@ function Todo() {
   const getData = async () => {
     await fetch(`${process.env.REACT_APP_API_URL}login.php`, {
       method: "POST",
-      body: sessionStorage.getItem("todo2"),
+      body: localStorage.getItem("todo2"),
     })
       .then((res) => res.json())
       .then((data) => setData(data))
@@ -109,7 +110,8 @@ function Todo() {
     setEditNow(uniqTask);
     for (const child of tasksList.current.children) {
       if (child.getAttribute("data-uniq") === uniqTask) {
-        document.getElementById("newTaskInput").value = child.children[1].innerHTML;
+        document.getElementById("newTaskInput").value =
+          child.children[1].innerHTML;
       }
     }
   };
@@ -155,17 +157,22 @@ function Todo() {
         method: "POST",
         body: JSON.stringify({
           username: data.username,
-          password: data.password
-        })
+          password: data.password,
+        }),
       })
-        .then(res => {
+        .then((res) => {
           if (res.status === 200) {
-            window.sessionStorage.removeItem("todo2");
+            window.localStorage.removeItem("todo2");
             window.location.href = "/login";
           }
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err));
     }
+  };
+
+  const logoutAccount = () => {
+    localStorage.removeItem("todo2");
+    window.location.href = "/login";
   }
 
   return (
@@ -245,13 +252,24 @@ function Todo() {
                   </li>
                 ))
               ) : (
-                <li className="p-2 border-2 border-zinc-900 rounded-md text-center">no tasks</li>
+                <li className="p-2 border-2 border-zinc-900 rounded-md text-center">
+                  no tasks
+                </li>
               )}
             </ul>
+            <button
+              onClick={logoutAccount}
+              className="absolute left-2 bottom-2 font-semibold flex flex-nowrap items-center gap-2 p-2 border-2 border-transparent hover:border-zinc-900 rounded-md transition-all"
+            >
+              <img src={logout} alt="" />
+              LOGOUT
+            </button>
           </div>
         </>
       ) : (
-        <h1>loading</h1>
+        <h1 className="w-screen h-screen grid place-items-center font-bold text-5xl">
+          LOADING...
+        </h1>
       )}
     </>
   );
