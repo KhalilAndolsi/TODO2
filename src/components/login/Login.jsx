@@ -3,11 +3,13 @@ import "./Login.css"
 import eyeOpen from "../../assets/icons/eyeOpen.svg"
 import eyeClose from "../../assets/icons/eyeClose.svg"
 import { Link } from 'react-router-dom'
+import Error from "../error/Error"
 
 function Login() {
   const [hidePassword, setHidePassword] = useState(false)
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
+  const [error, setError] = useState(false);
   useEffect(() => {
     if(localStorage.getItem("todo2") !== null) {
         setUsername(JSON.parse(localStorage.getItem("todo2")).username)
@@ -42,33 +44,38 @@ function Login() {
         }
       } catch (error) {
         console.error(error);
+        setError(true)
       }
     }
   }
   
   return (
-    <div className="container h-screen flex justify-center items-center mx-auto">
-      <div className="box p-2 h-min rounded-lg border-2 border-zinc-900 w-[95%] md:w-96">
-        <h2 className='font-semibold text-2xl uppercase text-center mb-6 p-3'>Login</h2>
-        <form className='flex flex-col gap-3' onSubmit={handleLoginSubmit}>
-          <input type="text" id='username' placeholder='Username' required defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
-          {(username.length >= 12 || username.length === 0) || <span className='block text-red-600 text-sm ml-3'>At least 12 characters</span>}
-          {/* password input */}
-          <div className='relative'>
-            <input type={hidePassword ? "text" : "password"} id='password' placeholder='Password' required defaultValue={password} onChange={(e) => setPassword(e.target.value)} />
-            <label htmlFor="showPassword" className='hidepsw' onClick={() => setHidePassword(!hidePassword)}>
-              {
-                !hidePassword ? <img src={eyeClose} alt="eyeclose" /> : <img src={eyeOpen} alt="eyeopen" />
-              }
-            </label> 
+    <>
+      {error ? <Error/> : (
+        <div className="container h-screen flex justify-center items-center mx-auto">
+          <div className="box p-2 h-min rounded-lg border-2 border-zinc-900 w-[95%] md:w-96">
+            <h2 className='font-semibold text-2xl uppercase text-center mb-6 p-3'>Login</h2>
+            <form className='flex flex-col gap-3' onSubmit={handleLoginSubmit}>
+              <input type="text" id='username' placeholder='Username' required defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
+              {(username.length >= 12 || username.length === 0) || <span className='block text-red-600 text-sm ml-3'>At least 12 characters</span>}
+              {/* password input */}
+              <div className='relative'>
+                <input type={hidePassword ? "text" : "password"} id='password' placeholder='Password' required defaultValue={password} onChange={(e) => setPassword(e.target.value)} />
+                <label htmlFor="showPassword" className='hidepsw' onClick={() => setHidePassword(!hidePassword)}>
+                  {
+                    !hidePassword ? <img src={eyeClose} alt="eyeclose" /> : <img src={eyeOpen} alt="eyeopen" />
+                  }
+                </label> 
+              </div>
+              {(password.length >= 8 || password.length === 0) || <span className='block text-red-600 text-sm ml-3'>At least 8 characters</span>}
+              {/* password input */}
+              <input type="submit" value="login" disabled={!(password.length >= 8 && username.length >= 12)} />
+              <Link to="/register" className='p-2 text-center'>I don't have account <span className='font-semibold'>Register</span></Link>
+            </form>
           </div>
-          {(password.length >= 8 || password.length === 0) || <span className='block text-red-600 text-sm ml-3'>At least 8 characters</span>}
-          {/* password input */}
-          <input type="submit" value="login" disabled={!(password.length >= 8 && username.length >= 12)} />
-          <Link to="/register" className='p-2 text-center'>I don't have account <span className='font-semibold'>Register</span></Link>
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   )
 }
 

@@ -10,3 +10,7 @@ body {
 ::selection {
   @apply bg-zinc-900 text-white;
 }
+
+input {
+  outline: none !important;
+}

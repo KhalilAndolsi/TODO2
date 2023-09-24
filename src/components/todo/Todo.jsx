@@ -4,6 +4,7 @@ import remove from "../../assets/icons/close.svg";
 import edit from "../../assets/icons/edit.svg";
 import trash from "../../assets/icons/trash.svg";
 import logout from "../../assets/icons/logout.svg";
+import Error from "../error/Error";
 import "./Todo.css";
 
 function Todo() {
@@ -14,7 +15,9 @@ function Todo() {
   const [editBtn, setEditBtn] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [editNow, setEditNow] = useState(null);
+  const [error, setError] = useState(false);
   const tasksList = useRef();
+  
   const getData = async () => {
     await fetch(`${process.env.REACT_APP_API_URL}login.php`, {
       method: "POST",
@@ -22,7 +25,10 @@ function Todo() {
     })
       .then((res) => res.json())
       .then((data) => setData(data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setError(true)
+      });
   };
   useEffect(() => {
     getData();
@@ -47,7 +53,10 @@ function Todo() {
           document.getElementById("newTaskInput").value = "";
           getData();
         })
-        .catch((err) => console.error(err));
+        .catch((err) => {
+          console.error(err);
+          setError(true)
+        });
     }
   };
 
@@ -74,7 +83,10 @@ function Todo() {
         res.json();
         getData();
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setError(true)
+      });
   };
 
   const deleteTask = async (uniqTask) => {
@@ -102,7 +114,10 @@ function Todo() {
         res.json();
         getData();
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setError(true)
+      });
   };
 
   const editTask = (uniqTask) => {
@@ -148,7 +163,10 @@ function Todo() {
         res.json();
         getData();
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setError(true)
+      });
   };
 
   const deleteAccount = async () => {
@@ -198,7 +216,7 @@ function Todo() {
             </div>
           </header>
           <div className="todos w-[95%] md:w-96 rounded-lg border-2 border-zinc-900 m-auto mt-6 p-2">
-            <div className="addTask flex flex-nowrap gap-3 mb-5">
+            <div className="addTask flex flex-nowrap gap-3 mb-2">
               <input
                 type="text"
                 placeholder="Add a new task"
@@ -223,6 +241,15 @@ function Todo() {
                 </button>
               )}
             </div>
+            {
+              data.tasks.tasks.length > 0 ? (
+              <div className="flex flex-nowrap gap-1 mb-2 items-center">
+                <i className="flex-1 h-1 bg-zinc-900 rounded-lg"></i>
+                <span className="font-semibold">{data.tasks.tasks.filter(d => d.done === true).length}/{data.tasks.tasks.length}</span>
+                <i className="flex-1 h-1 bg-zinc-900 rounded-lg"></i>
+              </div>
+              ) : undefined
+            }
             <ul className="todosList flex flex-col gap-1" ref={tasksList}>
               {data.tasks.tasks.length > 0 ? (
                 data.tasks.tasks.map((d, i) => (
@@ -230,6 +257,7 @@ function Todo() {
                     data-uniq={`tasks-${i}`}
                     key={i}
                     className="p-2 border-2 border-zinc-900 rounded-md flex flex-nowrap gap-3 items-center"
+                    style={{order: !d.done ? -1 : undefined}}
                   >
                     <input
                       type="checkbox"
@@ -271,6 +299,9 @@ function Todo() {
           LOADING...
         </h1>
       )}
+      {
+        error ? <Error/> : undefined
+      }
     </>
   );
 }
